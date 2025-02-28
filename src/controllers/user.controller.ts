@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import UserModel from "../models/user.model";
 import cloudinary from "../config/cloudinary";
 import { error } from "console";
+import fs from "fs";
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -153,6 +154,12 @@ export const uploadAvatar = async (req: MulterRequest, res: Response) => {
       { avatar: cloudinaryUrl },
       { new: true }
     );
+
+    fs.unlink(req.file!.path, (err) => {
+      if (err) {
+        console.error("Error deleting file", err);
+      }
+    });
 
     res.status(200).json({
       message: "Avatar uploaded successfully",
