@@ -10,8 +10,24 @@ interface MulterRequest extends Request {
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
+    const query = String(req.query.query || "");
+
+    if (query.trim()) {
+      const users = await UserModel.find({
+        $text: { $search: query },
+      });
+
+      if (!users || users.length === 0) {
+        res.status(404).json({ message: "User not found" });
+      } else {
+        res.status(200).json(users);
+      }
+      return;
+    }
+
     const users = await UserModel.find();
-    res.json(users);
+
+    res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: "Error fetching users", error });
   }
