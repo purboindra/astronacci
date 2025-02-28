@@ -6,7 +6,9 @@ import {
   updateUser,
   deleteUser,
   uploadAvatar,
+  deleteAvatar,
 } from "../controllers/user.controller";
+import upload from "../middleware/upload";
 
 const router = Router();
 
@@ -15,6 +17,7 @@ router.get("/:id", getUserById);
 router.post("/", createUser);
 router.put("/:id", updateUser);
 router.delete("/:id", deleteUser);
-router.delete("/upload-avatar/:id", uploadAvatar);
+router.delete("/delete-avatar/:id", deleteAvatar);
+router.post("/upload-avatar/:id", upload.single("avatar"), uploadAvatar);
 
 export default router;
