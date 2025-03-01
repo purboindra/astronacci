@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import UserModel from "../models/user.model";
 import crypto from "crypto";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
 import nodemailer from "nodemailer";
+import jwt from "jsonwebtoken";
+
+const SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 export const register = async (req: Request, res: Response) => {
   try {
@@ -23,6 +24,10 @@ export const register = async (req: Request, res: Response) => {
       res.status(400).json({ message: "User already exists/registered" });
     }
 
+    const token = jwt.sign({ email, name }, SECRET_KEY!, {
+      expiresIn: "1d",
+    });
+
     const user = new UserModel({
       name,
       email,
@@ -30,6 +35,7 @@ export const register = async (req: Request, res: Response) => {
       age,
       avatar,
       password,
+      access_token: token,
     });
 
     await user.save();
@@ -57,14 +63,20 @@ export const login = async (req: Request, res: Response) => {
       return;
     }
 
-    console.log("findUser", findUser, password);
-
     const isMatch = await findUser.comparePassword(password);
 
     if (!isMatch) {
       res.status(401).json({ message: "Invalid credentials" });
       return;
     }
+
+    const token = jwt.sign(
+      { email: findUser.email, username: findUser.name },
+      SECRET_KEY!,
+      {
+        expiresIn: "1d",
+      }
+    );
 
     res.status(201).json({
       message: "User logged in successfully",
@@ -74,9 +86,12 @@ export const login = async (req: Request, res: Response) => {
         address: findUser.address,
         age: findUser.age,
         avatar: findUser.avatar,
+        access_token: token,
       },
     });
   } catch (error) {
+    console.error("Error login", error);
+
     res.status(500).json({ message: "Unkown error occured!" });
   }
 };
@@ -130,7 +145,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
 export const resetPassword = async (
   req: Request,
-  res: Response,
+  res: Response
 ): Promise<void> => {
   try {
     const { token } = req.params;
