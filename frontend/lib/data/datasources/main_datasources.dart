@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:frontend/data/datasources/auth_datasources.dart';
 import 'package:frontend/data/failures/error_message.dart';
+import 'package:frontend/utils/constants.dart';
 import 'package:http/http.dart' as http;
 
 class MainDatasources {
@@ -11,7 +12,7 @@ class MainDatasources {
 
   final http.Client _httpClient;
 
-  static const baseAuthUrl = "http://192.168.1.7:3000/api/auth";
+  static const baseAuthUrl = "$baseUrl/api/auth";
 
   Future<http.Response> getUsers({String? query, int? page, int? limit}) async {
     try {
@@ -26,7 +27,7 @@ class MainDatasources {
 
       log("queryParameters: $queryParameters");
 
-      final uri = Uri.http("192.168.1.7:3000", "/api/users", queryParameters);
+      final uri = Uri.http("$ipAddress:3000", "/api/users", queryParameters);
 
       final response = await _httpClient.get(
         uri,

@@ -11,7 +11,7 @@ _UserModel _$UserModelFromJson(Map<String, dynamic> json) => _UserModel(
   name: json['name'] as String,
   email: json['email'] as String,
   address: json['address'] as String,
-  age: (json['age'] as num).toInt(),
+  age: (json['age'] as num?)?.toInt(),
   avatar: json['avatar'] as String?,
   password: json['password'] as String,
 );

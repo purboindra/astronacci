@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:frontend/data/failures/error_message.dart';
+import 'package:frontend/utils/constants.dart';
 import 'package:http/http.dart' as http;
 
 class RequestAuthFailure implements Exception {
@@ -16,7 +17,7 @@ class AuthDatasources {
 
   final http.Client _httpClient;
 
-  static const baseUrl = "http://192.168.1.7:3000/api/auth";
+  static const url = "$baseUrl/api/auth";
 
   Future<http.Response> register({
     required String email,
@@ -27,7 +28,7 @@ class AuthDatasources {
   }) async {
     try {
       final response = await _httpClient.post(
-        Uri.parse("$baseUrl/register"),
+        Uri.parse("$url/register"),
         body: jsonEncode({
           "email": email,
           "name": name,
@@ -63,7 +64,7 @@ class AuthDatasources {
 
     try {
       final response = await _httpClient.post(
-        Uri.parse("$baseUrl/login"),
+        Uri.parse("$url/login"),
         body: body,
         headers: {"Content-Type": "application/json"},
       );

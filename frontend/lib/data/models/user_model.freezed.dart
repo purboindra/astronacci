@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$UserModel {
 
-@JsonKey(name: '_id') String get id; String get name; String get email; String get address; int get age; String? get avatar; String get password;
+@JsonKey(name: '_id') String get id; String get name; String get email; String get address; int? get age; String? get avatar; String get password;
 /// Create a copy of UserModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -49,7 +49,7 @@ abstract mixin class $UserModelCopyWith<$Res>  {
   factory $UserModelCopyWith(UserModel value, $Res Function(UserModel) _then) = _$UserModelCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: '_id') String id, String name, String email, String address, int age, String? avatar, String password
+@JsonKey(name: '_id') String id, String name, String email, String address, int? age, String? avatar, String password
 });
 
 
@@ -66,14 +66,14 @@ class _$UserModelCopyWithImpl<$Res>
 
 /// Create a copy of UserModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? email = null,Object? address = null,Object? age = null,Object? avatar = freezed,Object? password = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? email = null,Object? address = null,Object? age = freezed,Object? avatar = freezed,Object? password = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,address: null == address ? _self.address : address // ignore: cast_nullable_to_non_nullable
-as String,age: null == age ? _self.age : age // ignore: cast_nullable_to_non_nullable
-as int,avatar: freezed == avatar ? _self.avatar : avatar // ignore: cast_nullable_to_non_nullable
+as String,age: freezed == age ? _self.age : age // ignore: cast_nullable_to_non_nullable
+as int?,avatar: freezed == avatar ? _self.avatar : avatar // ignore: cast_nullable_to_non_nullable
 as String?,password: null == password ? _self.password : password // ignore: cast_nullable_to_non_nullable
 as String,
   ));
@@ -86,14 +86,14 @@ as String,
 @JsonSerializable()
 
 class _UserModel implements UserModel {
-  const _UserModel({@JsonKey(name: '_id') required this.id, required this.name, required this.email, required this.address, required this.age, this.avatar, required this.password});
+  const _UserModel({@JsonKey(name: '_id') required this.id, required this.name, required this.email, required this.address, this.age, this.avatar, required this.password});
   factory _UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
 
 @override@JsonKey(name: '_id') final  String id;
 @override final  String name;
 @override final  String email;
 @override final  String address;
-@override final  int age;
+@override final  int? age;
 @override final  String? avatar;
 @override final  String password;
 
@@ -130,7 +130,7 @@ abstract mixin class _$UserModelCopyWith<$Res> implements $UserModelCopyWith<$Re
   factory _$UserModelCopyWith(_UserModel value, $Res Function(_UserModel) _then) = __$UserModelCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: '_id') String id, String name, String email, String address, int age, String? avatar, String password
+@JsonKey(name: '_id') String id, String name, String email, String address, int? age, String? avatar, String password
 });
 
 
@@ -147,14 +147,14 @@ class __$UserModelCopyWithImpl<$Res>
 
 /// Create a copy of UserModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? email = null,Object? address = null,Object? age = null,Object? avatar = freezed,Object? password = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? email = null,Object? address = null,Object? age = freezed,Object? avatar = freezed,Object? password = null,}) {
   return _then(_UserModel(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,address: null == address ? _self.address : address // ignore: cast_nullable_to_non_nullable
-as String,age: null == age ? _self.age : age // ignore: cast_nullable_to_non_nullable
-as int,avatar: freezed == avatar ? _self.avatar : avatar // ignore: cast_nullable_to_non_nullable
+as String,age: freezed == age ? _self.age : age // ignore: cast_nullable_to_non_nullable
+as int?,avatar: freezed == avatar ? _self.avatar : avatar // ignore: cast_nullable_to_non_nullable
 as String?,password: null == password ? _self.password : password // ignore: cast_nullable_to_non_nullable
 as String,
   ));

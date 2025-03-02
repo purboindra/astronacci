@@ -106,13 +106,24 @@ export const updateUser = async (req: Request, res: Response) => {
       return;
     }
 
+    const user = await UserModel.findById(req.params.id);
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
     const avatar = await uploadAvatar(req, res);
 
     const { address, age, name } = req.body;
 
     const updatedUser = await UserModel.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      {
+        address: address ?? user.address,
+        age: age ?? user.age,
+        name: name ?? user.name,
+      },
       { new: true }
     );
     if (!updatedUser) res.status(404).json({ message: "User not found" });

@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/features/main/bloc/main_bloc.dart';
 import 'package:frontend/features/main/bloc/main_event.dart';
 import 'package:frontend/features/main/bloc/main_state.dart';
+import 'package:frontend/utils/extensions.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -99,7 +102,25 @@ class _MainScreenState extends State<MainScreen> {
       ),
       appBar: AppBar(
         title: Text("Main Screen"),
-        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.person))],
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final prefs = await SharedPreferences.getInstance();
+              final token = prefs.getString("access_token");
+              if (token != null) {
+                final decodeToken = token.decodeToken();
+                final dataToken = jsonDecode(decodeToken);
+                if (!context.mounted) return;
+                Navigator.pushNamed(
+                  context,
+                  "/profile",
+                  arguments: dataToken["userId"],
+                );
+              }
+            },
+            icon: Icon(Icons.person),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Padding(

@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:frontend/utils/extensions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -17,6 +20,8 @@ class _SplashScreenState extends State<SplashScreen> {
     token = prefs.getString("access_token");
     if (!mounted) return;
     if (token != null) {
+      final decodeToken = token!.decodeToken();
+      log("Decode token: $decodeToken");
       Navigator.pushReplacementNamed(context, "/main");
     } else {
       Navigator.pushReplacementNamed(context, "/login");

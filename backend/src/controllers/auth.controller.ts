@@ -24,10 +24,6 @@ export const register = async (req: Request, res: Response) => {
       res.status(400).json({ message: "User already exists/registered" });
     }
 
-    const token = jwt.sign({ email, name }, SECRET_KEY!, {
-      expiresIn: "1d",
-    });
-
     const user = new UserModel({
       name,
       email,
@@ -35,12 +31,34 @@ export const register = async (req: Request, res: Response) => {
       age,
       avatar,
       password,
-      access_token: token,
     });
 
     await user.save();
 
-    res.status(201).json({ message: "User registered successfully" });
+    const token = jwt.sign(
+      {
+        userId: user._id,
+        email: user.email,
+        name: user.name,
+      },
+      SECRET_KEY!,
+      { expiresIn: "1d" }
+    );
+
+    user.access_token = token;
+    await user.save();
+
+    res.status(201).json({
+      message: "User registered in successfully",
+      user: {
+        name: user.name,
+        email: user.email,
+        address: user.address,
+        age: user.age,
+        avatar: user.avatar,
+        access_token: token,
+      },
+    });
   } catch (error) {
     console.error("Error register", error);
     res.status(500).json({ message: "Unkown error occured!" });
@@ -71,11 +89,13 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const token = jwt.sign(
-      { email: findUser.email, username: findUser.name },
-      SECRET_KEY!,
       {
-        expiresIn: "1d",
-      }
+        userId: findUser._id,
+        email: findUser.email,
+        name: findUser.name,
+      },
+      SECRET_KEY!,
+      { expiresIn: "1d" }
     );
 
     res.status(201).json({
