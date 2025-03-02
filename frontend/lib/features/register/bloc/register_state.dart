@@ -14,3 +14,17 @@ class RegisterError extends RegisterState {
   final String message;
   RegisterError(this.message);
 }
+
+class AddBulkUserInitial extends RegisterState {}
+
+class AddBulkUserLoading extends RegisterState {}
+
+class AddBulkUserSuccess extends RegisterState {
+  final Map<String, dynamic> data;
+  AddBulkUserSuccess(this.data);
+}
+
+class AddBulkError extends RegisterState {
+  final String message;
+  AddBulkError(this.message);
+}

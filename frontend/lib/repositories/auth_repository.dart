@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:frontend/data/datasources/auth_datasources.dart';
 import 'package:frontend/data/models/response_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthRepository {
   AuthRepository({AuthDatasources? authDatasources})
@@ -13,12 +14,17 @@ class AuthRepository {
     required String email,
     required String password,
   }) async {
+    final prefs = await SharedPreferences.getInstance();
+
     try {
       final response = await _authDatasources.login(
         email: email,
         password: password,
       );
       final body = json.decode(response.body);
+
+      await prefs.setString("access_token", body["user"]["access_token"]);
+
       return Success(body);
     } on RequestAuthFailure catch (e) {
       return Error(e.message);
@@ -34,6 +40,8 @@ class AuthRepository {
     required String age,
     required String password,
   }) async {
+    final prefs = await SharedPreferences.getInstance();
+
     try {
       final response = await _authDatasources.register(
         email: email,
@@ -43,6 +51,9 @@ class AuthRepository {
         password: password,
       );
       final body = json.decode(response.body);
+
+      await prefs.setString("access_token", body["user"]["access_token"]);
+
       return Success(body);
     } on RequestAuthFailure catch (e) {
       return Error(e.message);

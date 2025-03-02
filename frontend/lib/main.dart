@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/features/login/bloc/login_bloc.dart';
 import 'package:frontend/features/login/screen/login_screen.dart';
+import 'package:frontend/features/main/bloc/main_bloc.dart';
 import 'package:frontend/features/main/main_screen.dart';
 import 'package:frontend/features/register/bloc/register_bloc.dart';
 import 'package:frontend/features/register/screen/register_screen.dart';
 import 'package:frontend/features/splash/splash_screen.dart';
+import 'package:frontend/features/user/bloc/user_bloc.dart';
+import 'package:frontend/features/user/user_screen.dart';
 import 'package:frontend/repositories/auth_repository.dart';
+import 'package:frontend/repositories/main_repository.dart';
+import 'package:frontend/repositories/user_repository.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,6 +29,8 @@ class MyApp extends StatelessWidget {
           create: (_) => RegisterBloc(AuthRepository()),
         ),
         BlocProvider<LoginBloc>(create: (_) => LoginBloc(AuthRepository())),
+        BlocProvider<MainBloc>(create: (_) => MainBloc(MainRepository())),
+        BlocProvider<UserBloc>(create: (_) => UserBloc(UserRepository())),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -46,6 +53,13 @@ class MyApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         ),
         debugShowCheckedModeBanner: false,
+        onGenerateRoute: (settings) {
+          if (settings.name == "/user-detail") {
+            final String id = settings.arguments as String;
+            return MaterialPageRoute(builder: (context) => UserScreen(id: id));
+          }
+          return null;
+        },
         initialRoute: "/",
         routes: {
           "/": (context) => const SplashScreen(),

@@ -11,23 +11,46 @@ interface MulterRequest extends Request {
 export const getUsers = async (req: Request, res: Response) => {
   try {
     const query = String(req.query.query || "");
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = Math.min(parseInt(req.query.limit as string) || 10, 50);
+    const skip = (page - 1) * limit;
+
+    let users = [];
+    let totalUsers = 0;
 
     if (query.trim()) {
-      const users = await UserModel.find({
-        $text: { $search: query },
-      });
+      users = await UserModel.find({
+        $or: [
+          { name: { $regex: query, $options: "i" } }, // ✅ Case-insensitive search
+          { email: { $regex: query, $options: "i" } },
+        ],
+      })
+        .skip(skip)
+        .limit(limit);
 
-      if (!users || users.length === 0) {
-        res.status(404).json({ message: "User not found" });
-      } else {
-        res.status(200).json(users);
-      }
-      return;
+      totalUsers = await UserModel.countDocuments({
+        $or: [
+          { name: { $regex: query, $options: "i" } },
+          { email: { $regex: query, $options: "i" } },
+          { address: { $regex: query, $options: "i" } },
+        ],
+      });
+    } else {
+      users = await UserModel.find().skip(skip).limit(limit);
+      totalUsers = await UserModel.countDocuments();
     }
 
-    const users = await UserModel.find();
-
-    res.status(200).json(users);
+    if (!users || users.length === 0) {
+      res.status(404).json({ message: "User not found" });
+    } else {
+      res.status(200).json({
+        totalUsers,
+        page,
+        limit,
+        totalPages: Math.ceil(totalUsers / limit),
+        users,
+      });
+    }
   } catch (error) {
     res.status(500).json({ message: "Error fetching users", error });
   }
@@ -37,7 +60,7 @@ export const getUserById = async (req: Request, res: Response) => {
   try {
     const user = await UserModel.findById(req.params.id);
     if (!user) res.status(404).json({ message: "User not found" });
-    res.json(user);
+    res.status(200).json(user);
   } catch (error) {
     res.status(500).json({ message: "Error fetching user", error });
   }
