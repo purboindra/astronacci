@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:frontend/data/failures/error_message.dart';
 import 'package:frontend/utils/constants.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class RequestAuthFailure implements Exception {
   final String message;
@@ -56,11 +57,7 @@ class AuthDatasources {
     required String email,
     required String password,
   }) async {
-    log("authdatasource email: $email, password: $password");
-
     final body = jsonEncode({"email": email, "password": password});
-
-    log("body: $body");
 
     try {
       final response = await _httpClient.post(
@@ -69,7 +66,34 @@ class AuthDatasources {
         headers: {"Content-Type": "application/json"},
       );
 
-      log("response: ${response.body}");
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return response;
+      } else {
+        final responseBody = json.decode(response.body);
+        throw RequestAuthFailure(
+          responseBody["message"] ?? AppErrorMessage.unknownError,
+        );
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<http.Response> logout() async {
+    final prefs = await SharedPreferences.getInstance();
+
+    try {
+      final token = prefs.getString("access_token");
+
+      log("Token: $token");
+
+      final response = await _httpClient.post(
+        Uri.parse("$url/logout"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         return response;

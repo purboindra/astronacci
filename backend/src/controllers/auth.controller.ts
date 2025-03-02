@@ -2,9 +2,45 @@ import { Request, Response } from "express";
 import UserModel from "../models/user.model";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 const SECRET_KEY = process.env.JWT_SECRET_KEY;
+
+export const logout = async (req: Request, res: Response) => {
+  try {
+    console.log(req.headers.authorization);
+
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!token) {
+      res.status(401).json({ message: "Unauthorized: No token provided" });
+      return;
+    }
+
+    const decoded = jwt.verify(token, SECRET_KEY!) as JwtPayload & {
+      userId: string;
+    };
+
+    if (!decoded.userId) {
+      res.status(401).json({ message: "Invalid token: No userId found" });
+    }
+
+    const user = await UserModel.findById(decoded.userId);
+
+    if (!user) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    user.access_token = null;
+    await user.save();
+
+    res.status(200).json({ message: "User logged out successfully" });
+  } catch (error) {
+    console.error("Error during logout:", error);
+    res.status(500).json({ message: "Unknown error occurred!" });
+  }
+};
 
 export const register = async (req: Request, res: Response) => {
   try {

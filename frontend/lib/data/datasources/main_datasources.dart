@@ -25,8 +25,6 @@ class MainDatasources {
         queryParameters["query"] = query;
       }
 
-      log("queryParameters: $queryParameters");
-
       final uri = Uri.http("$ipAddress:3000", "/api/users", queryParameters);
 
       final response = await _httpClient.get(
@@ -35,8 +33,6 @@ class MainDatasources {
       );
 
       final data = jsonDecode(response.body);
-
-      log("data: $data");
 
       if (response.statusCode != 200) {
         throw RequestAuthFailure(

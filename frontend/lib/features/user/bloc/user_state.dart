@@ -23,3 +23,15 @@ class FetchDetailErrorState extends UserState {
 
   const FetchDetailErrorState({required this.message});
 }
+
+class DeleteUserSuccessState extends UserState {
+  final String message;
+
+  const DeleteUserSuccessState({required this.message});
+}
+
+class DeleteUserErrorState extends UserState {
+  final String message;
+
+  const DeleteUserErrorState({required this.message});
+}

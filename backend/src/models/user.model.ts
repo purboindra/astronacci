@@ -8,7 +8,7 @@ interface IUser extends mongoose.Document {
   address: string;
   password: string;
   avatar?: string | null;
-  access_token: string;
+  access_token?: string | null;
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
   comparePassword(candidatePassword: string): Promise<Boolean>;
@@ -25,7 +25,7 @@ const UserSchema = new mongoose.Schema<IUser>(
       required: true,
       unique: true,
     },
-    access_token: { type: String },
+    access_token: { type: String, default: null },
     password: { type: String, required: true },
     resetPasswordToken: { type: String },
     resetPasswordExpires: { type: Date },

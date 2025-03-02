@@ -20,6 +20,17 @@ class UserRepository {
     }
   }
 
+  Future<ResponseModel> deleteUser({required String id}) async {
+    try {
+      final response = await _userDatasources.deleteUser(id: id);
+      return Success(response.body);
+    } on RequestAuthFailure catch (e) {
+      return Error(e.message);
+    } catch (e) {
+      return Error(e.toString());
+    }
+  }
+
   Future<ResponseModel> uploadAvatar({
     required String id,
     required XFile file,

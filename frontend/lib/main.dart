@@ -4,13 +4,12 @@ import 'package:frontend/features/login/bloc/login_bloc.dart';
 import 'package:frontend/features/login/screen/login_screen.dart';
 import 'package:frontend/features/main/bloc/main_bloc.dart';
 import 'package:frontend/features/main/main_screen.dart';
-import 'package:frontend/features/profile/bloc/profile_bloc.dart';
-import 'package:frontend/features/profile/profile_screen.dart';
+import 'package:frontend/features/profile/profile_view.dart';
 import 'package:frontend/features/register/bloc/register_bloc.dart';
 import 'package:frontend/features/register/screen/register_screen.dart';
 import 'package:frontend/features/splash/splash_screen.dart';
 import 'package:frontend/features/user/bloc/user_bloc.dart';
-import 'package:frontend/features/user/user_screen.dart';
+import 'package:frontend/features/user/user_view.dart';
 import 'package:frontend/repositories/auth_repository.dart';
 import 'package:frontend/repositories/main_repository.dart';
 import 'package:frontend/repositories/user_repository.dart';
@@ -33,7 +32,6 @@ class MyApp extends StatelessWidget {
         BlocProvider<LoginBloc>(create: (_) => LoginBloc(AuthRepository())),
         BlocProvider<MainBloc>(create: (_) => MainBloc(MainRepository())),
         BlocProvider<UserBloc>(create: (_) => UserBloc(UserRepository())),
-        BlocProvider<ProfileBloc>(create: (_) => ProfileBloc(UserRepository())),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -59,12 +57,12 @@ class MyApp extends StatelessWidget {
         onGenerateRoute: (settings) {
           if (settings.name == "/user-detail") {
             final String id = settings.arguments as String;
-            return MaterialPageRoute(builder: (context) => UserScreen(id: id));
+            return MaterialPageRoute(
+              builder: (context) => UserView(userId: id),
+            );
           } else if (settings.name == "/profile") {
             final String id = settings.arguments as String;
-            return MaterialPageRoute(
-              builder: (context) => ProfileScreen(id: id),
-            );
+            return MaterialPageRoute(builder: (context) => ProfileView(id: id));
           }
           return null;
         },

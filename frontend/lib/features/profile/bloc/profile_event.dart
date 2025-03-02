@@ -34,3 +34,7 @@ class UpdateProfileEvent extends ProfileEvent {
   @override
   List<Object?> get props => [name, address, age];
 }
+
+class LogoutEvent extends ProfileEvent {
+  const LogoutEvent();
+}

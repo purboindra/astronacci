@@ -61,4 +61,17 @@ class AuthRepository {
       return Error(e.toString());
     }
   }
+
+  Future<ResponseModel> logout() async {
+    try {
+      final response = await _authDatasources.logout();
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove("access_token");
+      return Success(json.decode(response.body));
+    } on RequestAuthFailure catch (e) {
+      return Error(e.message);
+    } catch (e) {
+      return Error(e.toString());
+    }
+  }
 }

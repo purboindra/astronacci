@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/data/models/response_model.dart';
@@ -37,8 +36,6 @@ class MainBloc extends Bloc<MainEvent, MainState> {
       limit: event.limit,
       page: event.page,
     );
-
-    log("result: $result");
 
     if (result is Success) {
       final data = jsonDecode(result.data);

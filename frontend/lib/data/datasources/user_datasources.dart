@@ -37,6 +37,27 @@ class UserDatasources {
     }
   }
 
+  Future<http.Response> deleteUser({required String id}) async {
+    try {
+      final response = await _httpClient.delete(
+        Uri.parse("$url/$id"),
+        headers: {"Content-Type": "application/json"},
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode != 200) {
+        throw RequestAuthFailure(
+          data["message"] ?? AppErrorMessage.unknownError,
+        );
+      }
+
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<http.Response> uploadAvatar({
     required String id,
     required XFile file,
@@ -89,12 +110,16 @@ class UserDatasources {
       });
 
       final response = await _httpClient.put(
-        Uri.parse("$baseUrl/$id"),
+        Uri.parse("$url/$id"),
         body: jsonEncode(body),
         headers: {"Content-Type": "application/json"},
       );
 
+      log("response: ${response.body} == ${response.statusCode}");
+
       final data = jsonDecode(response.body);
+
+      log("data: $data");
 
       if (response.statusCode != 200) {
         throw RequestAuthFailure(
@@ -103,7 +128,8 @@ class UserDatasources {
       }
 
       return response;
-    } catch (e) {
+    } catch (e, st) {
+      log("error update profile: $e $st");
       rethrow;
     }
   }

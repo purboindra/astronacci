@@ -6,6 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:frontend/features/main/bloc/main_bloc.dart';
 import 'package:frontend/features/main/bloc/main_event.dart';
 import 'package:frontend/features/main/bloc/main_state.dart';
+import 'package:frontend/features/user/bloc/user_bloc.dart';
+import 'package:frontend/features/user/bloc/user_event.dart';
 import 'package:frontend/utils/extensions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -153,7 +155,17 @@ class _MainScreenState extends State<MainScreen> {
                           final user = (state).users[index];
                           return Dismissible(
                             key: ValueKey(user.id),
-                            onDismissed: (direction) {},
+                            onDismissed: (direction) {
+                              setState(() {
+                                (state).users.removeAt(index);
+                              });
+                              context.read<UserBloc>().add(
+                                DeleteUserEvent(id: user.id),
+                              );
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text("${user.name} deleted")),
+                              );
+                            },
 
                             child: ListTile(
                               onTap:
@@ -198,46 +210,51 @@ class _MainScreenState extends State<MainScreen> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          final result = await showDialog(
-            context: context,
-            builder: (context) {
-              return StatefulBuilder(
-                builder: (context, ststate) {
-                  final userCountController = TextEditingController();
+      floatingActionButton: Visibility(
+        visible: false,
+        child: FloatingActionButton(
+          onPressed: () async {
+            final result = await showDialog(
+              context: context,
+              builder: (context) {
+                return StatefulBuilder(
+                  builder: (context, ststate) {
+                    final userCountController = TextEditingController();
 
-                  return AlertDialog(
-                    title: Text("Add User"),
-                    content: TextField(
-                      controller: userCountController,
-                      decoration: InputDecoration(labelText: "Count"),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: Text("Cancel"),
+                    return AlertDialog(
+                      title: Text("Add User"),
+                      content: TextField(
+                        controller: userCountController,
+                        decoration: InputDecoration(labelText: "Count"),
                       ),
-                      TextButton(
-                        onPressed:
-                            () => Navigator.pop(
-                              context,
-                              userCountController.text,
-                            ),
-                        child: Text("Add"),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          );
-          if (result != null) {
-            if (context.mounted) {
-              context.read<MainBloc>().add(AddBulkUserEvent(int.parse(result)));
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text("Cancel"),
+                        ),
+                        TextButton(
+                          onPressed:
+                              () => Navigator.pop(
+                                context,
+                                userCountController.text,
+                              ),
+                          child: Text("Add"),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            );
+            if (result != null) {
+              if (context.mounted) {
+                context.read<MainBloc>().add(
+                  AddBulkUserEvent(int.parse(result)),
+                );
+              }
             }
-          }
-        },
+          },
+        ),
       ),
     );
   }

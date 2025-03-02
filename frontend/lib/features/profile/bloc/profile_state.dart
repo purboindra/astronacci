@@ -44,3 +44,21 @@ class UpdateProfileErrorState extends ProfileState {
   @override
   List<Object?> get props => [message];
 }
+
+class LogoutLoadingState extends ProfileState {}
+
+class LogoutSuccessState extends ProfileState {
+  final String message;
+  const LogoutSuccessState({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class LogoutErrorState extends ProfileState {
+  final String message;
+  const LogoutErrorState({required this.message});
+
+  @override
+  List<Object?> get props => [message];
+}

@@ -11,6 +11,7 @@ import 'package:frontend/repositories/user_repository.dart';
 class UserBloc extends Bloc<UserEvent, UserState> {
   UserBloc(this._userRepository) : super(FetchDetailInitialState()) {
     on<FetchDetailUserEvent>(_fetchDetailUser);
+    on<DeleteUserEvent>(_deleteUser);
   }
 
   void _fetchDetailUser(FetchDetailUserEvent event, Emitter emit) async {
@@ -24,6 +25,26 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         emit(FetchDetailSuccessState(userModel: user));
       } else if (result is Error) {
         emit(FetchDetailErrorState(message: result.message));
+      }
+    } catch (e) {
+      log("Error: $e");
+      emit(FetchDetailErrorState(message: e.toString()));
+    }
+  }
+
+  void _deleteUser(DeleteUserEvent event, Emitter emit) async {
+    try {
+      final result = await _userRepository.deleteUser(id: event.id);
+
+      if (result is Success) {
+        final data = jsonDecode(result.data);
+        emit(
+          DeleteUserSuccessState(
+            message: data["message"] ?? "User deleted successfully",
+          ),
+        );
+      } else if (result is Error) {
+        emit(DeleteUserErrorState(message: result.message));
       }
     } catch (e) {
       log("Error: $e");
